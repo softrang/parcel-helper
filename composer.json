@@ -1,0 +1,24 @@
+{
+    "name": "softrang/parcel-helper",
+    "description": "A helper package for placing and tracking parcels using Packzy and Steadfast API.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Softrang\\ParcelHelper\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Softrang\\ParcelHelper\\ParcelHelperServiceProvider"
+            ],
+            "aliases": {
+                "ParcelHelper": "Softrang\\ParcelHelper\\Facades\\ParcelHelper"
+            }
+        }
+    }
+}
