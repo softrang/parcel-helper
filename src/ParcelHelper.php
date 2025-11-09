@@ -1,58 +1,53 @@
 <?php
-
 namespace Softrang\ParcelHelper;
 
-use GuzzleHttp\Client;
 
-class ParcelHelper
+/**
+* Create an order/consignment
+*
+* Required input keys:
+* - invoice (string)
+* - recipient_name (string)
+* - recipient_phone (string)
+* - recipient_address (string)
+* - cod_amount (numeric)
+*
+* @param array $payload
+* @return array
+* @throws \InvalidArgumentException
+* @throws \RuntimeException
+*/
+public function createOrder(array $payload): array
 {
-    protected $client;
-    protected $packzyUrl;
-    protected $packzyApiKey;
-    protected $packzySecretKey;
+$required = ['invoice','recipient_name','recipient_phone','recipient_address','cod_amount'];
+foreach ($required as $field) {
+if (empty($payload[$field])) {
+throw new \InvalidArgumentException("Missing required field: $field");
+}
+}
 
-    public function __construct()
-    {
-        $this->client = new Client();
-        $this->packzyUrl = config('parcel-helper.packzy_url', env('PACKZY_BASE_URL'));
-        $this->packzyApiKey = config('parcel-helper.api_key', env('PACKZY_API_KEY'));
-        $this->packzySecretKey = config('parcel-helper.secret_key', env('PACKZY_SECRET_KEY'));
-    }
 
-    /**
-     * ✅ Place an order via Packzy API
-     */
-    public function createOrder(array $data)
-    {
-        $response = $this->client->post($this->packzyUrl . '/create_order', [
-            'headers' => [
-                'Api-key' => $this->packzyApiKey,
-                'secret-key' => $this->packzySecretKey,
-                'Accept' => 'application/json'
-            ],
-            'json' => $data
-        ]);
+try {
+$response = $this->http->post('/create_order', [
+'headers' => [
+'Api-Key' => $this->apiKey,
+'Secret-Key' => $this->secretKey,
+'Content-Type' => 'application/json',
+'Accept' => 'application/json',
+],
+'json' => $payload,
+]);
 
-        return json_decode($response->getBody(), true);
-    }
 
-    /**
-     * 🔍 Get report from Steadfast API
-     */
-    public function getReportByPhone($phone)
-    {
-        $url = "https://steadfast.com.bd/user/consignment/getbyphone/{$phone}";
+$body = (string) $response->getBody();
+$decoded = json_decode($body, true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+throw new \RuntimeException('Invalid JSON response from API');
+}
 
-        $response = $this->client->get($url, [
-            'auth' => [
-                'softrang24@gmail.com',
-                'Soft454546'
-            ],
-            'headers' => [
-                'Accept' => 'application/json'
-            ]
-        ]);
 
-        return json_decode($response->getBody(), true);
-    }
+return $decoded;
+} catch (GuzzleException $e) {
+throw new \RuntimeException('HTTP request failed: ' . $e->getMessage());
+}
 }
