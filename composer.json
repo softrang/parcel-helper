@@ -1,7 +1,7 @@
 {
     "name": "softrang/parcel-helper",
     "type": "library",
-    "description": "A small helper to place orders to Packzy (portal.packzy.com) using API keys from env/config.",
+    "description": "A small helper to place orders  using API keys from env/config.",
     "license": "MIT",
     "authors": [
         {
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {

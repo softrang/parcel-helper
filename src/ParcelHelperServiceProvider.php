@@ -14,7 +14,7 @@ public function boot()
 // Publish config
 $this->publishes([
 __DIR__ . '/../config/parcel-helper.php' => config_path('parcel-helper.php'),
-], 'config');
+], 'parcel-helpar');
 }
 
 
